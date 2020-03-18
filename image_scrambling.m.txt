@@ -1,0 +1,36 @@
+clc
+clear all
+close all
+
+
+%for hard drusen image uncomment below two lines
+a=imread('C:\Users\sri ram\Desktop\rahul\Data Set\train\softdrusen\DRUSEN-224974-22.jpg');
+figure,imshow(a)
+
+%for soft drusen image uncomment below two lines
+%a=imread('E:\NeuralNetwork\val\SOFT DRUSEN\DRUSEN (2093).jpeg');
+%figure,imshow(a)
+
+%for normal image uncomment below two lines
+%a=imread('E:\NeuralNetwork\val\NORMAL\NORMAL-5246808-2.jpeg');
+%figure,imshow(a)
+
+
+matlabroot = 'C:\Users\sri ram\Desktop\rahul\Data Set'
+Datasetpath = fullfile(matlabroot,'train')
+Data = imageDatastore(Datasetpath,'IncludeSubfolders',true,'LabelSource','foldernames')
+
+layers = [imageInputLayer([480 495 3])
+    convolution2dLayer(5,20)
+    reluLayer
+    maxPooling2dLayer(2,'stride',2)
+    convolution2dLayer(5,20)
+    reluLayer
+    maxPooling2dLayer(2,'stride',2)
+    fullyConnectedLayer(2)
+    softmaxLayer
+    classificationLayer()]
+
+options = trainingOptions('sgdm','MaxEpochs',1,'initialLearnRate',0.0001);
+convnet = trainNetwork(Data,layers,options)
+output = classify(convnet,a)
